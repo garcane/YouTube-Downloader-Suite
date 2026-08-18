@@ -1,0 +1,47 @@
+# Downloaded media — carried over from both source repositories' ignore rules.
+*.mp4
+*.mp3
+*.m4a
+*.webm
+*.opus
+*.part
+
+# ffmpeg binaries, in case anyone drops them in the tree as the original
+# YouTube-To-Audio script used to do.
+ffmpeg
+ffmpeg.exe
+ffprobe.exe
+ffplay.exe
+ffmpeg-master-latest-win64-gpl/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.eggs/
+.venv/
+venv/
+env/
+
+# Tooling
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.tox/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Runtime
+*.log
+instance/
+.env

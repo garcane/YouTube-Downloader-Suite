@@ -1,0 +1,32 @@
+# Normalize to LF in the repository and in working trees on every platform.
+# The two source repositories had inconsistent line endings; without this,
+# checkouts on Windows produce whole-file diffs that bury real changes.
+* text=auto eol=lf
+
+*.py    text eol=lf
+*.md    text eol=lf
+*.css   text eol=lf
+*.html  text eol=lf
+*.js    text eol=lf
+*.toml  text eol=lf
+*.yml   text eol=lf
+*.cfg   text eol=lf
+*.txt   text eol=lf
+
+# Windows-only helpers keep CRLF or they will not run.
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.ps1   text eol=crlf
+
+*.ico   binary
+*.png   binary
+*.jpg   binary
+*.woff  binary
+*.woff2 binary
+*.mp4   binary
+*.mp3   binary
+*.m4a   binary
+*.webm  binary
+
+# Keep merge noise out of history docs.
+docs/HISTORY.md merge=union

@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "youtube-downloader-suite"
+version = "1.0.0.dev0"
+description = "Unified YouTube video and audio downloader with CLI, web and desktop interfaces"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "garcane", email = "114095068+garcane@users.noreply.github.com" }]
+keywords = ["youtube", "downloader", "mp3", "mp4", "ffmpeg"]
+
+# The core library depends only on pytubefix. Everything else is optional, so
+# a CLI-only user does not install Flask, and a web user does not install Tk.
+dependencies = [
+    "pytubefix>=9.4",
+]
+
+[project.optional-dependencies]
+web = ["flask>=3.0"]
+gui = ["customtkinter>=5.2"]
+# Fallback ffmpeg binary for machines without one on PATH.
+ffmpeg = ["imageio-ffmpeg>=0.5"]
+dev = ["pytest>=8.0", "pytest-cov>=5.0"]
+all = [
+    "youtube-downloader-suite[web,gui,ffmpeg]",
+]
+
+[project.urls]
+Homepage = "https://github.com/garcane/YouTube-Downloader-Suite"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"ytdl.web" = ["templates/*.html", "static/css/*.css", "static/js/*.js", "static/images/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+markers = [
+    "network: test requires live network access to YouTube (deselect with -m 'not network')",
+    "ffmpeg: test requires an ffmpeg binary to be resolvable",
+]
