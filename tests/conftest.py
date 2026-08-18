@@ -17,6 +17,7 @@ _YTDL_ENV_VARS = (
     "YTDL_CLIENT",
     "YTDL_FFMPEG",
     "YTDL_FFPROBE",
+    "YTDL_OUTPUT",
 )
 
 

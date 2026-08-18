@@ -104,6 +104,7 @@ this applies to your machine.
 | `YTDL_CLIENT` | Force pytubefix client order, e.g. `MWEB` or `WEB,MWEB` |
 | `YTDL_FFMPEG` | Full path to an ffmpeg binary |
 | `YTDL_FFPROBE` | Full path to an ffprobe binary |
+| `YTDL_OUTPUT` | Default download folder, overriding `~/Downloads` |
 | `NO_COLOR` | Disable CLI colour |
 
 ## Development
@@ -134,6 +135,16 @@ Everything in `core` reports through `Progress` callbacks and raises
 `YtdlError` subclasses, which is what lets one implementation serve three
 interfaces. Design documentation is in [docs/DESIGN.md](docs/DESIGN.md) and
 [docs/DESIGN-APPLICATION.md](docs/DESIGN-APPLICATION.md).
+
+## Docker
+
+```bash
+docker compose -f docker/docker-compose.yml up --build
+```
+
+Serves the web interface on <http://localhost:8000>, with downloads landing in
+`docker/downloads/` on the host. The GUI extra is excluded from the image, since
+Tk needs a display.
 
 ## Legal
 

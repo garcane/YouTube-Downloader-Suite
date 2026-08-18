@@ -134,3 +134,28 @@ def test_format_bytes(value, expected):
 )
 def test_format_duration(value, expected):
     assert format_duration(value) == expected
+
+
+class TestOutputDirectory:
+    def test_env_override_wins(self, monkeypatch, tmp_path):
+        from ytdl.core.download import ENV_OUTPUT, default_output_dir
+
+        monkeypatch.setenv(ENV_OUTPUT, str(tmp_path))
+        assert default_output_dir() == tmp_path
+
+    def test_falls_back_to_downloads_when_unset(self, monkeypatch):
+        from pathlib import Path
+
+        from ytdl.core.download import ENV_OUTPUT, default_output_dir
+
+        monkeypatch.delenv(ENV_OUTPUT, raising=False)
+        result = default_output_dir()
+        assert result == Path.home() / "Downloads" or result == Path.home()
+
+    def test_blank_override_is_ignored(self, monkeypatch):
+        from pathlib import Path
+
+        from ytdl.core.download import ENV_OUTPUT, default_output_dir
+
+        monkeypatch.setenv(ENV_OUTPUT, "   ")
+        assert default_output_dir() != Path("   ")

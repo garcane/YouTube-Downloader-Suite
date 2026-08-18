@@ -1,0 +1,25 @@
+# Descended from the compose file added to YouTube-MP4-Downloader-Pro in
+# f67b9d9 and removed the same day. That version mounted the source directory
+# and kept a TTY open for the interactive CLI; this one serves the web
+# interface instead.
+
+services:
+  ytdl:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: ytdl-web
+    ports:
+      # Bound to 127.0.0.1 on the host, not 0.0.0.0: the interface has no
+      # authentication and writes files as the container user, so it must not
+      # be reachable from the network.
+      - "127.0.0.1:8000:8000"
+    volumes:
+      # Downloaded files land on the host rather than inside the container.
+      - ./downloads:/downloads
+    environment:
+      # YouTube blocks pytubefix client types unpredictably; pin one here if the
+      # automatic fallback picks a slow path. Leave unset for automatic.
+      # YTDL_CLIENT: MWEB
+      PYTHONUNBUFFERED: "1"
+    restart: unless-stopped

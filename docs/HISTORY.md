@@ -33,8 +33,17 @@ main (empty initial commit)
  └── merge import-ympd  ── legacy/youtube-mp4-pro/    ── 40 commits back to 2023-09-17
 ```
 
-As the unified application was built, files moved out of `legacy/` with `git mv`,
-so their lineage continues to trace through the refactor.
+As the unified application was built, the two scripts' logic was redistributed
+across `src/ytdl/core/`, and `legacy/` was removed once the consolidation was
+verified end to end. The originals remain fully readable in history:
+
+```bash
+git show 2d83c2a:app.py    # YouTube-To-Audio, final standalone version
+git show 0f89ed4:app.py    # YouTube-MP4-Downloader-Pro, final standalone version
+```
+
+[MIGRATION.md](MIGRATION.md) records where each original capability ended up,
+and the two that were deliberately not carried over.
 
 ## Reading pre-merge history
 
@@ -63,16 +72,16 @@ Two sets of files that had been deleted from the source repositories were
 restored from history during the merge, because they are directly useful to the
 unified application:
 
-- **Flask web application** (`legacy/youtube-to-audio/web-original/`) — recovered
-  from `253e473`. YouTube-To-Audio began life as a Flask site with Bootstrap
+- **Flask web application** (now `src/ytdl/web/`) — recovered from `253e473`. YouTube-To-Audio began life as a Flask site with Bootstrap
   templates (`index`, `about`, `contact`, `privacy`, `terms`) before commit
   `17468d9`, "Converting the website into a command line app", removed them in
   February 2024. The web interface of the unified application builds on these
   rather than starting from scratch. Note `static/styles.css` was already empty
   at the time of deletion.
-- **Docker configuration** (`legacy/youtube-mp4-pro/docker-original/`) — recovered
-  from `f67b9d9`, added and removed on the same day in February 2025. It installs
-  `ffmpeg` via apt, which is the basis of the unified container image.
+- **Docker configuration** (now `docker/`) — recovered from `f67b9d9`, added and
+  removed on the same day in February 2025. It installs `ffmpeg` via apt, which
+  remains the basis of the unified container image, though the entry point and
+  dependency install were updated for the new layout.
 
 A later snapshot of the web app exists at `25c1f6d`, but its `index.html` is a
 16-line stub against `253e473`'s 84-line Bootstrap page, so `253e473` was used.

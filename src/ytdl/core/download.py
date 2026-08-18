@@ -37,13 +37,26 @@ from .naming import sanitize_filename, unique_path
 from .streams import DEFAULT_MP3_BITRATE, StreamOption, VideoInfo, fetch_info
 
 
+#: Overrides the default download location. Set by the container image, and
+#: useful anywhere the home directory is not where files should land.
+ENV_OUTPUT = "YTDL_OUTPUT"
+
+
 def default_output_dir() -> Path:
     """Where downloads land when the caller does not say.
 
+    ``YTDL_OUTPUT`` wins if set; otherwise the user's Downloads folder, falling
+    back to the home directory.
+
     Both originals used ``os.getcwd()``, which put files wherever the terminal
-    happened to be — and is meaningless for a web server or a GUI. The user's
-    Downloads folder is the least surprising default.
+    happened to be — and is meaningless for a web server or a GUI.
     """
+    import os
+
+    override = os.environ.get(ENV_OUTPUT, "").strip()
+    if override:
+        return Path(override).expanduser()
+
     downloads = Path.home() / "Downloads"
     return downloads if downloads.is_dir() else Path.home()
 
