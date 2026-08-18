@@ -9,7 +9,7 @@ description = "Unified YouTube video and audio downloader with CLI, web and desk
 readme = "README.md"
 requires-python = ">=3.9"
 license = { file = "LICENSE" }
-authors = [{ name = "garcane", email = "114095068+garcane@users.noreply.github.com" }]
+authors = [{ name = "garcane" }]
 keywords = ["youtube", "downloader", "mp3", "mp4", "ffmpeg"]
 
 # The core library depends only on pytubefix. Everything else is optional, so

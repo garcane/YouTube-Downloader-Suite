@@ -9,14 +9,14 @@ and browsable here.
 
 | Source | Merged from | Commits | Active period |
 | --- | --- | --- | --- |
-| [YouTube-To-Audio](https://github.com/garcane/YouTube-To-Audio) | `main` @ `2d83c2a` | 57 | Jan 2024 – Oct 2024 |
-| [YouTube-MP4-Downloader-Pro](https://github.com/garcane/YouTube-MP4-Downloader-Pro) | `main` @ `0f89ed4` | 40 | Sep 2023 – Sep 2025 |
+| [YouTube-To-Audio](https://github.com/garcane/YouTube-To-Audio) | `main` @ `681bd2b` | 57 | Jan 2024 – Oct 2024 |
+| [YouTube-MP4-Downloader-Pro](https://github.com/garcane/YouTube-MP4-Downloader-Pro) | `main` @ `a16b4e9` | 40 | Sep 2023 – Sep 2025 |
 
 Both original tips are ancestors of `main`. Verify at any time with:
 
 ```bash
-git merge-base --is-ancestor 2d83c2a HEAD && echo "YouTube-To-Audio history present"
-git merge-base --is-ancestor 0f89ed4 HEAD && echo "YouTube-MP4-Downloader-Pro history present"
+git merge-base --is-ancestor 681bd2b HEAD && echo "YouTube-To-Audio history present"
+git merge-base --is-ancestor a16b4e9 HEAD && echo "YouTube-MP4-Downloader-Pro history present"
 ```
 
 ## How the merge was performed
@@ -38,8 +38,8 @@ across `src/ytdl/core/`, and `legacy/` was removed once the consolidation was
 verified end to end. The originals remain fully readable in history:
 
 ```bash
-git show 2d83c2a:app.py    # YouTube-To-Audio, final standalone version
-git show 0f89ed4:app.py    # YouTube-MP4-Downloader-Pro, final standalone version
+git show 681bd2b:app.py    # YouTube-To-Audio, final standalone version
+git show a16b4e9:app.py    # YouTube-MP4-Downloader-Pro, final standalone version
 ```
 
 [MIGRATION.md](MIGRATION.md) records where each original capability ended up,
@@ -62,8 +62,8 @@ need one project's history unambiguously, anchor the query to that project's
 pre-merge tip:
 
 ```bash
-git log 2d83c2a -- app.py    # YouTube-To-Audio only
-git log 0f89ed4 -- app.py    # YouTube-MP4-Downloader-Pro only
+git log 681bd2b -- app.py    # YouTube-To-Audio only
+git log a16b4e9 -- app.py    # YouTube-MP4-Downloader-Pro only
 ```
 
 ## Recovered material
@@ -72,23 +72,30 @@ Two sets of files that had been deleted from the source repositories were
 restored from history during the merge, because they are directly useful to the
 unified application:
 
-- **Flask web application** (now `src/ytdl/web/`) — recovered from `253e473`. YouTube-To-Audio began life as a Flask site with Bootstrap
+- **Flask web application** (now `src/ytdl/web/`) — recovered from `b4101cf`. YouTube-To-Audio began life as a Flask site with Bootstrap
   templates (`index`, `about`, `contact`, `privacy`, `terms`) before commit
-  `17468d9`, "Converting the website into a command line app", removed them in
+  `bdaee8d`, "Converting the website into a command line app", removed them in
   February 2024. The web interface of the unified application builds on these
   rather than starting from scratch. Note `static/styles.css` was already empty
   at the time of deletion.
-- **Docker configuration** (now `docker/`) — recovered from `f67b9d9`, added and
+- **Docker configuration** (now `docker/`) — recovered from `c2804ef`, added and
   removed on the same day in February 2025. It installs `ffmpeg` via apt, which
   remains the basis of the unified container image, though the entry point and
   dependency install were updated for the new layout.
 
-A later snapshot of the web app exists at `25c1f6d`, but its `index.html` is a
-16-line stub against `253e473`'s 84-line Bootstrap page, so `253e473` was used.
+A later snapshot of the web app exists at `6a413c3`, but its `index.html` is a
+16-line stub against `b4101cf`'s 84-line Bootstrap page, so `b4101cf` was used.
 
 ## Authorship
 
-Commits carry five author identities (`George`, `garcane`, `garcane` across four
-email addresses) reflecting GitHub username and email changes over the years.
-These are unified for display by `/.mailmap`, which changes no commit hashes.
-`git shortlog -sne` shows the collapsed view.
+All commits are authored by `garcane <114095068+garcane@users.noreply.github.com>`.
+
+The two source repositories had accumulated several author identities over the
+years, reflecting GitHub username and email changes. Rather than paper over them
+with a `.mailmap`, the history was rewritten with `git filter-repo` so that a
+single identity — the GitHub handle and GitHub's own privacy address — appears
+throughout, and no personal email address is present in any commit.
+
+This rewrite changed every commit hash. Hashes quoted in this repository's
+documentation refer to the rewritten history; the pre-rewrite hashes visible in
+the original repositories will not resolve here.

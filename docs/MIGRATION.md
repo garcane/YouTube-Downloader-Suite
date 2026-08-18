@@ -6,8 +6,8 @@ what deliberately did not carry over. The originals lived at
 consolidation was verified; both remain readable in this repository's history.
 
 ```bash
-git show 2d83c2a:app.py    # YouTube-To-Audio, final standalone version
-git show 0f89ed4:app.py    # YouTube-MP4-Downloader-Pro, final standalone version
+git show 681bd2b:app.py    # YouTube-To-Audio, final standalone version
+git show a16b4e9:app.py    # YouTube-MP4-Downloader-Pro, final standalone version
 ```
 
 ## YouTube-To-Audio
@@ -21,7 +21,7 @@ git show 0f89ed4:app.py    # YouTube-MP4-Downloader-Pro, final standalone versio
 | 48 kHz sample rate | `core/ffmpeg.py` `transcode_audio` | Preserved as the default |
 | Audio download → MP3 | `core/download.py` | Now staged through a temp directory |
 | Temp `.mp4` cleanup | `core/download.py` | Handled by `TemporaryDirectory` |
-| Flask web app (deleted 2024) | `web/` | Restored from `253e473`; the 2024 favicon is byte-identical |
+| Flask web app (deleted 2024) | `web/` | Restored from `b4101cf`; the 2024 favicon is byte-identical |
 | **ffmpeg auto-download** | — | **Deliberately dropped.** See below |
 
 ## YouTube-MP4-Downloader-Pro
@@ -35,7 +35,7 @@ git show 0f89ed4:app.py    # YouTube-MP4-Downloader-Pro, final standalone versio
 | Adaptive stream merging | `core/ffmpeg.py` `merge_streams` | Now a stream copy rather than a MoviePy re-encode |
 | Temp file cleanup | `core/download.py` | Handled by `TemporaryDirectory` |
 | "Download another?" loop | all three interfaces | Each interface handles repetition in its own idiom |
-| Docker config (deleted 2025) | `legacy/.../docker-original/` | Recovered from `f67b9d9`; not yet wired into the app |
+| Docker config (deleted 2025) | `docker/` | Recovered from `c2804ef` and updated for the new layout |
 | **Duration-mismatch trimming** | — | **Deliberately dropped.** See below |
 
 ## Deliberate omissions
