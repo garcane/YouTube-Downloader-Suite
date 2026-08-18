@@ -38,6 +38,7 @@ all = [
 [project.scripts]
 ytdl = "ytdl.cli:main"
 ytdl-web = "ytdl.web.__main__:main"
+ytdl-gui = "ytdl.gui:main"
 
 [project.urls]
 Homepage = "https://github.com/garcane/YouTube-Downloader-Suite"
