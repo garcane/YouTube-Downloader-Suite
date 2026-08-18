@@ -1,0 +1,359 @@
+/* ============================================================================
+ * Component styles, built from the tokens in tokens.css.
+ * See docs/DESIGN.md for the system and docs/DESIGN-APPLICATION.md for how it
+ * maps onto this application.
+ *
+ * Rule of thumb followed throughout: components reference the band-scoped
+ * aliases (--fg, --surface, --hairline) rather than raw palette entries, so a
+ * single component works correctly in a dark band and a light one.
+ * ==========================================================================*/
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--body-md-size);
+  line-height: var(--body-md-lh);
+  letter-spacing: var(--body-md-ls);
+  background: var(--canvas-dark);
+  color: var(--on-dark);
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding-inline: var(--space-xl);
+}
+
+/* Full-bleed bands slam against each other — no soft transitions. */
+.band { padding-block: var(--space-section); }
+.band-dark + .band-dark { padding-top: 0; }
+
+/* --- Typography --------------------------------------------------------- */
+
+.display-xl {
+  font-family: var(--font-display);
+  font-size: var(--display-xl-size);
+  line-height: var(--display-xl-lh);
+  letter-spacing: var(--display-xl-ls);
+  font-weight: var(--weight-display);
+  margin: 0 0 var(--space-xl);
+}
+
+.heading-lg {
+  font-family: var(--font-display);
+  font-size: var(--heading-lg-size);
+  line-height: var(--heading-lg-lh);
+  letter-spacing: var(--heading-lg-ls);
+  font-weight: var(--weight-display);
+  margin: 0;
+}
+
+.heading-md {
+  font-family: var(--font-display);
+  font-size: var(--heading-md-size);
+  line-height: var(--heading-md-lh);
+  font-weight: var(--weight-display);
+  margin: 0 0 var(--space-xl);
+}
+
+.body-lg { font-size: var(--body-lg-size); line-height: var(--body-lg-lh); }
+.body-sm { font-size: var(--body-sm-size); line-height: var(--body-sm-lh); }
+.on-dark-mute { color: var(--on-dark-mute); }
+
+/* --- Navigation --------------------------------------------------------- */
+
+.nav { padding-block: 0; }
+.nav__inner {
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav__mark {
+  font-family: var(--font-display);
+  font-size: var(--heading-sm-size);
+  font-weight: var(--weight-display);
+  letter-spacing: -0.01em;
+}
+.nav__meta { font-size: var(--body-sm-size); color: var(--on-dark-mute); }
+
+/* --- Hero --------------------------------------------------------------- */
+
+.hero { padding-top: var(--space-block); }
+.hero__sub {
+  color: var(--on-dark-mute);
+  max-width: 46ch;
+  margin: 0 0 var(--space-xxxl);
+}
+
+.resolve {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  max-width: 640px;
+}
+
+.text-input {
+  flex: 1 1 320px;
+  height: var(--input-height);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--rounded-md);
+  border: 1px solid var(--hairline-light);
+  background: var(--canvas-light);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--body-md-size);
+}
+.text-input::placeholder { color: var(--stone); }
+.text-input:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+/* --- Buttons: every one is a pill --------------------------------------- */
+
+.button {
+  height: var(--control-height);
+  padding: var(--space-md) var(--space-xxl);
+  border-radius: var(--rounded-full);
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-size: var(--body-md-size);
+  font-weight: var(--weight-body-bold);
+  letter-spacing: var(--body-md-ls);
+  cursor: pointer;
+  transition: background-color var(--motion-duration) ease,
+              color var(--motion-duration) ease;
+}
+.button:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+.button[disabled] { opacity: 0.55; cursor: not-allowed; }
+
+/* The brand's loudest action: a white pill on the dark canvas. */
+.button--primary { background: var(--canvas-light); color: var(--canvas-dark); }
+.button--primary:hover:not([disabled]) { background: var(--faint); }
+
+.button--outline-dark {
+  background: transparent;
+  color: var(--on-dark);
+  border-color: var(--on-dark);
+}
+.button--outline-dark:hover:not([disabled]) {
+  background: var(--on-dark);
+  color: var(--canvas-dark);
+}
+
+.button--dark { background: var(--canvas-dark); color: var(--on-dark); }
+.button--soft { background: var(--surface-soft); color: var(--ink); }
+
+.button--sm { height: var(--chip-height); padding: var(--space-sm) var(--space-lg);
+              font-size: var(--body-sm-size); }
+
+/* --- Chips (the resolution picker) -------------------------------------- */
+
+.chips {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+  overflow-x: auto;              /* scroll-rail below 768px, per the system */
+  scrollbar-width: none;
+  padding-bottom: var(--space-xxs);
+}
+.chips::-webkit-scrollbar { display: none; }
+
+.chip {
+  flex: 0 0 auto;
+  height: var(--chip-height);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--rounded-full);
+  border: 1px solid var(--hairline-dark);
+  background: var(--surface-elevated);
+  color: var(--on-dark);
+  font-family: inherit;
+  font-size: var(--body-sm-size);
+  font-weight: var(--weight-body-bold);
+  cursor: pointer;
+}
+.chip--active { background: var(--on-dark); color: var(--canvas-dark); }
+.chip:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+
+/* --- Video header ------------------------------------------------------- */
+
+.video-head {
+  display: flex;
+  gap: var(--space-xl);
+  align-items: center;
+  margin-bottom: var(--space-xxl);
+  flex-wrap: wrap;
+}
+.video-head__thumb {
+  width: 160px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--rounded-md);
+}
+
+/* --- Option cards ------------------------------------------------------- */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-lg);
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-xxl);
+  border-radius: var(--rounded-lg);
+  background: var(--surface-elevated);
+  color: var(--on-dark);
+  /* The system forbids drop shadows; surface-elevated is only 1.18:1 against
+     black, so a hairline keeps the card edge perceivable. */
+  border: 1px solid var(--hairline-dark);
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform var(--motion-duration) ease;
+}
+.card:hover { transform: translateY(-2px); }
+.card:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+
+/* Cobalt inversion marks the recommended option — at most one per view. */
+.card--featured { background: var(--primary); border-color: var(--primary); }
+.card--featured .card__meta { color: rgba(255,255,255,0.82); }
+
+.card__label {
+  font-family: var(--font-display);
+  font-size: var(--heading-lg-size);
+  line-height: var(--heading-lg-lh);
+  letter-spacing: var(--heading-lg-ls);
+  font-weight: var(--weight-display);
+}
+.card__meta { font-size: var(--body-sm-size); color: var(--on-dark-mute); }
+
+.badges { display: flex; gap: var(--space-xs); flex-wrap: wrap; }
+.badge {
+  padding: var(--space-xxs) var(--space-md);
+  border-radius: var(--rounded-full);
+  font-size: var(--caption-size);
+  background: rgba(255,255,255,0.12);
+  color: var(--on-dark);
+}
+.badge--feature { background: var(--on-dark); color: var(--canvas-dark); font-weight: 600; }
+
+/* --- Progress ----------------------------------------------------------- *
+ * Not in DESIGN.md — see docs/DESIGN-APPLICATION.md for why cobalt is spent
+ * here, and why nothing else on screen should be cobalt while it is visible.
+ */
+
+.progress { margin-top: var(--space-lg); }
+.progress__track {
+  height: 6px;
+  border-radius: var(--rounded-full);
+  background: var(--progress-track);
+  overflow: hidden;
+}
+.progress__fill {
+  height: 100%;
+  width: 0;
+  background: var(--progress-fill);
+  border-radius: var(--rounded-full);
+  transition: width var(--motion-duration) linear;
+}
+.progress__fill--indeterminate {
+  width: 35%;
+  animation: slide 1.2s ease-in-out infinite;
+}
+@keyframes slide {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .progress__fill--indeterminate { animation: none; width: 100%; opacity: 0.5; }
+  .card:hover { transform: none; }
+}
+.progress__label {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  font-size: var(--body-sm-size);
+  color: var(--on-dark-mute);
+  margin-top: var(--space-sm);
+}
+
+/* --- Results (light catalogue band) ------------------------------------- */
+
+.results { background: var(--canvas-light); }
+.tiles { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-md); }
+
+.tile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  min-height: var(--input-height);
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--rounded-md);
+  background: var(--surface-soft);
+  color: var(--ink);
+  flex-wrap: wrap;
+}
+.tile__name { font-weight: var(--weight-body-bold); word-break: break-word; }
+.tile__meta { font-size: var(--body-sm-size); color: var(--mute); }
+.tile__actions { display: flex; gap: var(--space-sm); }
+
+/* Status colours: the -text variants, which pass AA. The bright accents are
+   for fills only — see the contrast table in docs/DESIGN-APPLICATION.md. */
+.status-ok { color: var(--status-ok-text); font-weight: var(--weight-body-bold); }
+.status-err { color: var(--status-err-text); font-weight: var(--weight-body-bold); }
+
+.feedback {
+  margin-top: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--rounded-md);
+  background: var(--surface-elevated);
+  border-left: 3px solid var(--accent-danger);
+  color: var(--on-dark);
+  max-width: 640px;
+}
+.feedback__hint { display: block; margin-top: var(--space-xs); color: var(--on-dark-mute);
+                  font-size: var(--body-sm-size); }
+
+/* --- Footer ------------------------------------------------------------- */
+
+.footer { padding-block: var(--space-block); border-top: 1px solid var(--divider-soft); }
+.footer__inner {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  font-size: var(--body-sm-size);
+}
+
+/* --- Responsive --------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .band { padding-block: 64px; }
+  .card-grid { grid-template-columns: 1fr; }
+  .resolve { flex-direction: column; }
+  .button { width: 100%; }
+  .chip { min-height: 44px; }   /* bumped for touch, per the system */
+
+  /* Once .resolve stacks, the main axis is vertical and the input's
+     flex-basis would be read as a height — rendering a 320px-tall box that
+     overrides height: var(--input-height). Pin the basis to auto so the
+     declared height wins again. */
+  .text-input { flex: 0 0 auto; width: 100%; }
+}
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}

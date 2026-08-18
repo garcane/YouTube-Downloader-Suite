@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Downloader Suite</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+</head>
+<body>
+
+  <!-- Storytelling canvas: the active job lives on black. -->
+  <header class="band band-dark nav">
+    <div class="container nav__inner">
+      <span class="nav__mark">ytdl</span>
+      <span class="nav__meta" id="ffmpeg-badge" hidden></span>
+    </div>
+  </header>
+
+  <section class="band band-dark hero">
+    <div class="container">
+      <h1 class="display-xl">Download from<br>YouTube.</h1>
+      <p class="body-lg hero__sub">
+        Video up to 4K, or audio as MP3 or M4A. Runs entirely on your machine.
+      </p>
+
+      <form class="resolve" id="resolve-form" autocomplete="off">
+        <input
+          class="text-input"
+          id="url"
+          name="url"
+          type="url"
+          inputmode="url"
+          placeholder="Paste a YouTube link"
+          aria-label="YouTube link"
+          required>
+        <button class="button button--primary" id="resolve-button" type="submit">
+          Fetch
+        </button>
+      </form>
+
+      <p class="feedback" id="resolve-error" role="alert" hidden></p>
+    </div>
+  </section>
+
+  <!-- Options appear as plan cards; the best quality is the featured one. -->
+  <section class="band band-dark options" id="options-section" hidden>
+    <div class="container">
+      <div class="video-head">
+        <img class="video-head__thumb" id="thumb" alt="" hidden>
+        <div>
+          <h2 class="heading-lg" id="video-title"></h2>
+          <p class="body-sm on-dark-mute" id="video-meta"></p>
+        </div>
+      </div>
+
+      <div class="chips" id="kind-filter" role="tablist" aria-label="Filter by type">
+        <button class="chip chip--active" data-kind="all" role="tab">All</button>
+        <button class="chip" data-kind="video" role="tab">Video</button>
+        <button class="chip" data-kind="audio" role="tab">Audio</button>
+      </div>
+
+      <div class="card-grid" id="options-grid"></div>
+    </div>
+  </section>
+
+  <!-- Catalogue canvas: finished work lives on white. -->
+  <section class="band band-light results" id="results-section" hidden>
+    <div class="container">
+      <h2 class="heading-md">Downloads</h2>
+      <ul class="tiles" id="results-list"></ul>
+    </div>
+  </section>
+
+  <footer class="band band-dark footer">
+    <div class="container footer__inner">
+      <span>YouTube Downloader Suite <span class="on-dark-mute">v{{ version }}</span></span>
+      <span class="on-dark-mute" id="status-line">Checking environment…</span>
+      <span class="on-dark-mute">Saving to {{ default_output }}</span>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

@@ -166,7 +166,8 @@ class StreamOption:
     progressive: bool = False        # video and audio already in one stream
     needs_merge: bool = False        # requires ffmpeg to combine tracks
     needs_transcode: bool = False    # requires ffmpeg to change format
-    recommended: bool = False        # drives the featured card in the UI
+    recommended: bool = False        # drives the featured (cobalt) card — at most one
+    is_default: bool = False         # pre-selected within its kind, shown neutrally
 
     @property
     def requires_ffmpeg(self) -> bool:
@@ -194,6 +195,7 @@ class StreamOption:
             "needs_transcode": self.needs_transcode,
             "requires_ffmpeg": self.requires_ffmpeg,
             "recommended": self.recommended,
+            "is_default": self.is_default,
         }
 
 
@@ -459,7 +461,10 @@ def fetch_info(
                     abr=bitrate,
                     mime_type="audio/mpeg",
                     needs_transcode=True,
-                    recommended=(bitrate == DEFAULT_MP3_BITRATE),
+                    # Marked default, not recommended: 'recommended' drives the
+                    # cobalt featured card, and the design system allows only
+                    # one of those per view.
+                    is_default=(bitrate == DEFAULT_MP3_BITRATE),
                 )
             )
 
