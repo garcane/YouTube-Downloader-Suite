@@ -35,6 +35,9 @@ all = [
     "youtube-downloader-suite[web,gui,ffmpeg,tls]",
 ]
 
+[project.scripts]
+ytdl = "ytdl.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/garcane/YouTube-Downloader-Suite"
 
