@@ -27,6 +27,7 @@ from .jobs import (
     format_duration,
 )
 from .naming import sanitize_filename
+from .net import TlsDiagnosis, diagnose as tls_diagnose, enable_system_trust
 from .streams import (
     DEFAULT_MP3_BITRATE,
     MP3_BITRATES,
@@ -58,6 +59,9 @@ __all__ = [
     "format_bytes",
     "format_duration",
     "ffmpeg_available",
+    "enable_system_trust",
+    "tls_diagnose",
+    "TlsDiagnosis",
     "ffmpeg_status",
     "MP3_BITRATES",
     "DEFAULT_MP3_BITRATE",

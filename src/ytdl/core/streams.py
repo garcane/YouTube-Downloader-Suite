@@ -132,7 +132,24 @@ def _resolution_sort_key(resolution: Optional[str]) -> int:
 
 def _translate_pytubefix_error(exc: Exception, video_id: str) -> Exception:
     """Map pytubefix's exception vocabulary onto ours, with usable wording."""
+    import ssl
+    import urllib.error
+
     from pytubefix import exceptions as pte
+
+    # A TLS failure here is almost always local interception rather than
+    # anything to do with the video, so answer the question the user actually
+    # has instead of surfacing an SSL stack trace.
+    ssl_error = exc if isinstance(exc, ssl.SSLError) else getattr(exc, "reason", None)
+    if isinstance(exc, urllib.error.URLError) or isinstance(ssl_error, ssl.SSLError):
+        from .net import diagnose
+
+        result = diagnose()
+        if not result.ok:
+            return VideoUnavailableError(
+                f"Could not reach YouTube securely. {result.detail}",
+                hint=result.remedy,
+            )
 
     if isinstance(exc, pte.VideoPrivate):
         return VideoUnavailableError("This video is private.")
@@ -180,6 +197,12 @@ def fetch_info(
     extra request whose check pytubefix already performs properly.
     """
     from pytubefix import YouTube
+
+    from .net import enable_system_trust
+
+    # Use the OS certificate verifier when available, so machines behind
+    # antivirus or corporate TLS interception work without configuration.
+    enable_system_trust()
 
     canonical = normalize_url(url)
     video_id = canonical.rsplit("=", 1)[-1]
