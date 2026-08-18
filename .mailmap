@@ -1,0 +1,14 @@
+# Unifies the five author identities carried in from the two source repositories.
+# This affects how Git *displays* authorship (git log, git shortlog, git blame);
+# it rewrites nothing and changes no commit hashes.
+#
+# Historic identities merged here:
+#   George             <114095068+garcane@users.noreply.github.com>
+#   George             <114095068+garcane@users.noreply.github.com>
+#   garcane            <114095068+garcane@users.noreply.github.com>
+#   garcane            <114095068+garcane@users.noreply.github.com>
+#   garcane      <114095068+garcane@users.noreply.github.com>          (canonical)
+
+garcane <114095068+garcane@users.noreply.github.com> <114095068+garcane@users.noreply.github.com>
+garcane <114095068+garcane@users.noreply.github.com> <114095068+garcane@users.noreply.github.com>
+garcane <114095068+garcane@users.noreply.github.com> <114095068+garcane@users.noreply.github.com>
