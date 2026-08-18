@@ -14,7 +14,8 @@ from ytdl.core.errors import StreamNotFoundError, VideoUnavailableError
 
 class FakeStream:
     def __init__(self, itag, *, resolution=None, abr=None, progressive=False,
-                 only_video=False, only_audio=False, mime_type="video/mp4", fps=30):
+                 only_video=False, only_audio=False, mime_type="video/mp4", fps=30,
+                 subtype="mp4", codecs=("avc1.4d400c",)):
         self.itag = itag
         self.resolution = resolution
         self.abr = abr
@@ -24,6 +25,8 @@ class FakeStream:
         self.only_audio = only_audio
         self.mime_type = mime_type
         self.fps = fps
+        self.subtype = subtype
+        self.codecs = list(codecs)
         self.filesize_approx = 1_000_000
         self.filesize = 1_000_000
 
@@ -209,3 +212,132 @@ class TestErrorTranslation:
         with pytest.raises(VideoUnavailableError) as excinfo:
             streams.fetch_info("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
         assert "pytubefix" in (excinfo.value.hint or "")
+
+
+class TestClientFallback:
+    """YouTube blocks pytubefix clients selectively, so the core tries several."""
+
+    @pytest.fixture(autouse=True)
+    def reset_remembered_client(self):
+        original = streams._working_client
+        streams._working_client = None
+        yield
+        streams._working_client = original
+
+    def test_default_order_leads_with_a_progressive_capable_client(self):
+        # MWEB is the only client still exposing progressive streams, which
+        # download without needing ffmpeg at all.
+        assert streams.DEFAULT_CLIENT_ORDER[0] == "MWEB"
+
+    def test_environment_variable_overrides_the_order(self, monkeypatch):
+        monkeypatch.setenv(streams.ENV_CLIENT, "web, tv ,IOS")
+        assert streams._client_candidates() == ["WEB", "TV", "IOS"]
+
+    def test_a_working_client_is_tried_first_next_time(self):
+        streams._working_client = "WEB_SAFARI"
+        assert streams._client_candidates()[0] == "WEB_SAFARI"
+
+    def test_falls_through_blocked_clients_to_a_working_one(self, monkeypatch):
+        from pytubefix import exceptions as pte
+
+        attempted = []
+
+        def factory(url, client=None, **kwargs):
+            attempted.append(client)
+            if client in ("MWEB", "WEB"):
+                raise pte.BotDetection(video_id="x")
+            return FakeYouTube(url)
+
+        monkeypatch.setattr("pytubefix.YouTube", factory)
+        info = streams.fetch_info("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+
+        assert attempted[:3] == ["MWEB", "WEB", "WEB_SAFARI"]
+        assert info.title == "Test Video 2024"
+        assert streams._working_client == "WEB_SAFARI"
+
+    def test_definitive_failures_do_not_waste_time_on_other_clients(self, monkeypatch):
+        from pytubefix import exceptions as pte
+
+        attempted = []
+
+        def factory(url, client=None, **kwargs):
+            attempted.append(client)
+            raise pte.VideoPrivate(video_id="x")
+
+        monkeypatch.setattr("pytubefix.YouTube", factory)
+        with pytest.raises(VideoUnavailableError, match="private"):
+            streams.fetch_info("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+
+        assert len(attempted) == 1  # no point retrying a private video
+
+    def test_reports_failure_when_every_client_is_blocked(self, monkeypatch):
+        from pytubefix import exceptions as pte
+
+        def factory(url, client=None, **kwargs):
+            raise pte.BotDetection(video_id="x")
+
+        monkeypatch.setattr("pytubefix.YouTube", factory)
+        with pytest.raises(VideoUnavailableError):
+            streams.fetch_info("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+
+    def test_http_errors_are_treated_as_client_specific(self):
+        import urllib.error
+
+        exc = urllib.error.HTTPError("u", 400, "Bad Request", {}, None)
+        assert streams._is_client_specific_failure(exc)
+        assert not streams._is_definitive_failure(exc)
+
+    def test_private_video_is_definitive_not_client_specific(self):
+        from pytubefix import exceptions as pte
+
+        exc = pte.VideoPrivate(video_id="x")
+        assert streams._is_definitive_failure(exc)
+
+
+class TestCodecSelection:
+    """Merging is a stream copy, so the codec chosen here is the codec delivered."""
+
+    def test_h264_is_preferred_over_av1_and_vp9_at_the_same_resolution(self, monkeypatch):
+        class MultiCodec(FakeYouTube):
+            def __init__(self, url, **kwargs):
+                self.url = url
+                self.streams = FakeQuery([
+                    FakeStream(242, resolution="240p", only_video=True,
+                               subtype="webm", codecs=("vp9",)),
+                    FakeStream(395, resolution="240p", only_video=True,
+                               subtype="mp4", codecs=("av01.0.00M.08",)),
+                    FakeStream(133, resolution="240p", only_video=True,
+                               subtype="mp4", codecs=("avc1.4d400c",)),
+                    FakeStream(140, abr="128kbps", only_audio=True,
+                               subtype="mp4", codecs=("mp4a.40.2",)),
+                ])
+
+        monkeypatch.setattr("pytubefix.YouTube", MultiCodec)
+        info = streams.fetch_info("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+
+        option = info.find("240p")
+        assert option.itag == 133          # H.264, not AV1 or VP9
+        assert option.codec == "avc1"
+        assert option.subtype == "mp4"
+
+    def test_av1_wins_when_h264_is_not_offered(self, monkeypatch):
+        class NoH264(FakeYouTube):
+            def __init__(self, url, **kwargs):
+                self.url = url
+                self.streams = FakeQuery([
+                    FakeStream(242, resolution="240p", only_video=True,
+                               subtype="webm", codecs=("vp9",)),
+                    FakeStream(395, resolution="240p", only_video=True,
+                               subtype="mp4", codecs=("av01.0.00M.08",)),
+                    FakeStream(140, abr="128kbps", only_audio=True,
+                               subtype="mp4", codecs=("mp4a.40.2",)),
+                ])
+
+        monkeypatch.setattr("pytubefix.YouTube", NoH264)
+        info = streams.fetch_info("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+        assert info.find("240p").itag == 395   # MP4/AV1 beats WebM/VP9
+
+    def test_codec_metadata_reaches_the_interfaces(self, info):
+        for option in info.video_options:
+            assert option.subtype in ("mp4", "webm")
+        assert "codec" in info.options[0].as_dict()

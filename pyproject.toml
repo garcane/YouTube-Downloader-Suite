@@ -14,8 +14,12 @@ keywords = ["youtube", "downloader", "mp3", "mp4", "ffmpeg"]
 
 # The core library depends only on pytubefix. Everything else is optional, so
 # a CLI-only user does not install Flask, and a web user does not install Tk.
+# pytubefix tracks YouTube's frequently-changing player. Versions below 10.x
+# cannot decipher current signatures at all (they fail with RegexMatchError on
+# get_initial_function_name), so the floor is deliberately high and should be
+# raised again whenever YouTube breaks the extractor.
 dependencies = [
-    "pytubefix>=9.4",
+    "pytubefix>=10.11",
 ]
 
 [project.optional-dependencies]

@@ -161,8 +161,23 @@ def _pick_stream(info: VideoInfo, option: StreamOption):
     raise StreamNotFoundError(f"The '{option.label}' stream is no longer available.")
 
 
-def _best_audio_stream(info: VideoInfo):
-    stream = info._yt.streams.filter(only_audio=True).order_by("abr").desc().first()
+def _best_audio_stream(info: VideoInfo, *, prefer_subtype: Optional[str] = None):
+    """Highest-bitrate audio, preferring one that matches the video's container.
+
+    Container matching matters: YouTube's best audio is usually Opus in WebM,
+    but Opus inside an MP4 is refused by QuickTime, older Windows players and
+    most TVs. Since merging is a stream copy, pairing an MP4 video with WebM
+    audio produces a technically valid file that many players will not open.
+    Matching containers keeps the remux lossless *and* the output playable.
+    """
+    streams = info._yt.streams.filter(only_audio=True)
+
+    if prefer_subtype:
+        matching = streams.filter(subtype=prefer_subtype).order_by("abr").desc().first()
+        if matching is not None:
+            return matching
+
+    stream = streams.order_by("abr").desc().first()
     if stream is None:
         raise StreamNotFoundError("This video has no audio track to download.")
     return stream
@@ -240,11 +255,17 @@ def _run_video_pipeline(
     cancel: Optional[CancelToken],
 ) -> Path:
     stream = _pick_stream(info, option)
-    final_path = unique_path(directory, stem, ".mp4")
+
+    # The container follows the video stream: an MP4 video stays in .mp4, a
+    # VP9/WebM video is written as .webm rather than being forced into an MP4
+    # box it does not belong in.
+    subtype = getattr(stream, "subtype", None) or option.subtype or "mp4"
+    extension = ".webm" if subtype == "webm" else ".mp4"
+    final_path = unique_path(directory, stem, extension)
 
     if option.progressive:
         with tempfile.TemporaryDirectory(prefix="ytdl-") as tmp:
-            staged = Path(tmp) / f"{stem}.mp4"
+            staged = Path(tmp) / f"{stem}{extension}"
             _download_stream(
                 stream, staged, _Stage(reporter, 0.0, 1.0),
                 message=f"Downloading {option.label}", cancel=cancel,
@@ -254,12 +275,14 @@ def _run_video_pipeline(
 
     # Adaptive: video-only plus audio, then remux. Weights reflect that video
     # dominates transfer time and the stream copy is comparatively quick.
-    audio_stream = _best_audio_stream(info)
+    audio_stream = _best_audio_stream(info, prefer_subtype=subtype)
+    audio_extension = ".webm" if getattr(audio_stream, "subtype", None) == "webm" else ".m4a"
+
     with tempfile.TemporaryDirectory(prefix="ytdl-") as tmp:
         tmp_dir = Path(tmp)
-        video_part = tmp_dir / "video.mp4"
-        audio_part = tmp_dir / "audio.m4a"
-        merged = tmp_dir / "merged.mp4"
+        video_part = tmp_dir / f"video{extension}"
+        audio_part = tmp_dir / f"audio{audio_extension}"
+        merged = tmp_dir / f"merged{extension}"
 
         _download_stream(
             stream, video_part, _Stage(reporter, 0.0, 0.65),

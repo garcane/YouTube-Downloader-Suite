@@ -300,16 +300,21 @@ def merge_streams(
     libx264 re-encode it replaces. ``+faststart`` moves the index to the front
     so the result plays immediately in a browser.
     """
+    args = [
+        "-i", str(video_path),
+        "-i", str(audio_path),
+        "-c", "copy",
+        "-map", "0:v:0",
+        "-map", "1:a:0",
+    ]
+    # +faststart relocates the MP4 index for immediate playback. It is an MP4
+    # muxer option and ffmpeg rejects it for a WebM output.
+    if output_path.suffix.lower() in (".mp4", ".m4a", ".mov"):
+        args += ["-movflags", "+faststart"]
+    args.append(str(output_path))
+
     run_ffmpeg(
-        [
-            "-i", str(video_path),
-            "-i", str(audio_path),
-            "-c", "copy",
-            "-map", "0:v:0",
-            "-map", "1:a:0",
-            "-movflags", "+faststart",
-            str(output_path),
-        ],
+        args,
         total_duration=probe_duration(video_path),
         reporter=reporter,
         phase=Phase.MUXING,
