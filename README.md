@@ -133,8 +133,12 @@ src/ytdl/
 
 Everything in `core` reports through `Progress` callbacks and raises
 `YtdlError` subclasses, which is what lets one implementation serve three
-interfaces. Design documentation is in [docs/DESIGN.md](docs/DESIGN.md) and
-[docs/DESIGN-APPLICATION.md](docs/DESIGN-APPLICATION.md).
+interfaces.
+
+- [docs/HISTORY.md](docs/HISTORY.md) — how the two repositories were merged
+- [docs/MIGRATION.md](docs/MIGRATION.md) — where each original capability went
+- [docs/DESIGN.md](docs/DESIGN.md) — the design system
+- [docs/DESIGN-APPLICATION.md](docs/DESIGN-APPLICATION.md) — how it maps onto this app
 
 ## Docker
 
