@@ -224,7 +224,7 @@ body {
 .card:hover { transform: translateY(-2px); }
 .card:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
 
-/* The accent inversion marks the recommended option — at most one per view. */
+/* Cobalt inversion marks the recommended option — at most one per view. */
 .card--featured { background: var(--primary); border-color: var(--primary); }
 .card--featured .card__meta { color: rgba(255,255,255,0.82); }
 
@@ -248,8 +248,8 @@ body {
 .badge--feature { background: var(--on-dark); color: var(--canvas-dark); font-weight: 600; }
 
 /* --- Progress ----------------------------------------------------------- *
- * Not in DESIGN.md — see docs/DESIGN-APPLICATION.md for why the accent is
- * spent here, and why nothing else on screen should carry it meanwhile.
+ * Not in DESIGN.md — see docs/DESIGN-APPLICATION.md for why cobalt is spent
+ * here, and why nothing else on screen should be cobalt while it is visible.
  */
 
 .progress { margin-top: var(--space-lg); }
