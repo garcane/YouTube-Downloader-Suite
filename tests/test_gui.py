@@ -106,8 +106,8 @@ class TestState:
         assert app.fetch_button.cget("text") == "Fetch"
 
     def test_featured_card_stands_down_during_a_download(self, app):
-        # docs/DESIGN-APPLICATION.md: the progress bar is the one cobalt element
-        # on screen while it is visible.
+        # docs/DESIGN-APPLICATION.md: the progress bar is the one accent-coloured
+        # element on screen while it is visible.
         app._handle_info(sample_info())
         assert app._downloading is False
 
@@ -170,7 +170,7 @@ class TestTokens:
     def test_palette_matches_the_design_system(self):
         from ytdl import gui
 
-        assert gui.PRIMARY == "#494fdf"
+        assert gui.PRIMARY == "#a21caf"        # not Revolut's cobalt
         assert gui.CANVAS_DARK == "#000000"       # true black, never near-black
         assert gui.SURFACE_ELEVATED == "#16181a"
 

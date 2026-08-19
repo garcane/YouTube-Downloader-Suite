@@ -166,7 +166,7 @@ class StreamOption:
     progressive: bool = False        # video and audio already in one stream
     needs_merge: bool = False        # requires ffmpeg to combine tracks
     needs_transcode: bool = False    # requires ffmpeg to change format
-    recommended: bool = False        # drives the featured (cobalt) card — at most one
+    recommended: bool = False        # drives the featured accent card — at most one
     is_default: bool = False         # pre-selected within its kind, shown neutrally
 
     @property
@@ -462,7 +462,7 @@ def fetch_info(
                     mime_type="audio/mpeg",
                     needs_transcode=True,
                     # Marked default, not recommended: 'recommended' drives the
-                    # cobalt featured card, and the design system allows only
+                    # accent featured card, and the design system allows only
                     # one of those per view.
                     is_default=(bitrate == DEFAULT_MP3_BITRATE),
                 )

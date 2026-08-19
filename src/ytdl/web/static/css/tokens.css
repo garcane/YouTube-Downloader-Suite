@@ -12,10 +12,16 @@
  * ==========================================================================*/
 
 :root {
-  /* --- Brand ------------------------------------------------------------ */
-  --primary:              #494fdf;
-  --primary-bright:       #4f55f1;
-  --primary-deep:         #3a40c4;
+  /* --- Brand ------------------------------------------------------------ *
+   * The source document's cobalt violet (#494fdf) is Revolut's own brand
+   * colour and is deliberately not used here. This fuchsia occupies the same
+   * structural role — scarce, reserved for the featured card and the progress
+   * fill — and was chosen because it collides with none of the status colours
+   * (green success, red error, amber warning) and clears WCAG AA with white
+   * text at 6.32:1.                                                          */
+  --primary:              #a21caf;
+  --primary-bright:       #c026d3;
+  --primary-deep:         #86198f;
   --on-primary:           #ffffff;
 
   /* --- Text ------------------------------------------------------------- */
@@ -139,7 +145,7 @@
    * spinner language. These are additions for this application, chosen to
    * stay inside the system's rules (see docs/DESIGN-APPLICATION.md).       */
   --progress-track-dark:  var(--surface-elevated);
-  --progress-fill-dark:   var(--primary-bright); /* 3.7:1 on black, passes
+  --progress-fill-dark:   var(--primary-bright); /* 4.46:1 on black, clears
                                                     WCAG 1.4.11 non-text    */
   --progress-track-light: var(--surface-soft);
   --progress-fill-light:  var(--ink);

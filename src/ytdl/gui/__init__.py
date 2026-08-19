@@ -44,9 +44,9 @@ from ..core import (
 CANVAS_DARK = "#000000"
 SURFACE_ELEVATED = "#16181a"
 SURFACE_DEEP = "#0a0a0a"
-PRIMARY = "#494fdf"
-PRIMARY_BRIGHT = "#4f55f1"
-PRIMARY_DEEP = "#3a40c4"
+PRIMARY = "#a21caf"          # see tokens.css: not Revolut's cobalt
+PRIMARY_BRIGHT = "#c026d3"
+PRIMARY_DEEP = "#86198f"
 ON_DARK = "#ffffff"
 ON_DARK_MUTE = "#b8b8b8"
 HAIRLINE = "#2a2d30"
@@ -75,7 +75,7 @@ class DownloaderApp(ctk.CTk):
         self.info: Optional[VideoInfo] = None
         self.cancel_token: Optional[CancelToken] = None
         # docs/DESIGN-APPLICATION.md: while a progress bar is visible it is the
-        # one cobalt element on screen, so the featured card stands down.
+        # one accent-coloured element on screen, so the featured card stands down.
         self._downloading = False
         self.worker: Optional[threading.Thread] = None
         self.output_dir = default_output_dir()
@@ -301,7 +301,7 @@ class DownloaderApp(ctk.CTk):
 
         self.cancel_token = CancelToken()
         self._downloading = True
-        self._render_options(self.info)   # featured card yields cobalt to the bar
+        self._render_options(self.info)   # featured card yields the accent to the bar
         self.progress_bar.grid()
         self.progress_bar.set(0)
         self.cancel_button.grid()

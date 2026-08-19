@@ -7,8 +7,9 @@ one-to-one. This document records how the system is mapped, what was added, and
 what was deliberately not followed — so the design intent survives contact with
 the app.
 
-Tokens live in `src/ytdl/web/static/css/tokens.css` as a direct transcription of
-DESIGN.md. Everything below concerns *application* of those tokens.
+Tokens live in `src/ytdl/web/static/css/tokens.css`, transcribed from DESIGN.md
+except for the brand colour, which is deliberately this project's own — see
+Deviations. Everything below concerns *application* of those tokens.
 
 ## Component mapping
 
@@ -18,9 +19,9 @@ DESIGN.md. Everything below concerns *application* of those tokens.
 | Primary action ("Fetch") | `button-primary` | White pill on black — the brightest pixel, exactly as specified. |
 | Resolution picker | `button-pill-sm` row | Maps unusually cleanly: `['360p','720p','1080p','audio']` becomes a pill row. Converts to a horizontal scroll-rail below 768px, per the responsive rules. |
 | Format / quality options | `plan-card` grid | Each downloadable variant becomes a card on `surface-elevated`. |
-| Recommended option | `plan-card-featured` | The single cobalt-violet element per viewport — best available quality. |
+| Recommended option | `plan-card-featured` | The single accent-coloured element per viewport — best available quality. |
 | "Audio only" / "1080p" labels | `badge-tag` | Neutral metadata chips. |
-| "Recommended" flag | `badge-feature` | Cobalt badge, at most one visible. |
+| "Recommended" flag | `badge-feature` | Accent badge, at most one visible. |
 | Completed downloads list | `download-tile` | 56px rows on `surface-soft`, in a light band. |
 | Results / history section | `band-light` catalogue mode | The dark→light band switch separates "doing" from "browsing", which happens to match the app's two modes exactly. |
 | Footer | `footer` | Version, ffmpeg status, links. |
@@ -34,10 +35,11 @@ DESIGN.md has no progress, status, spinner, modal, or toast language — the
 marketing site never needed them. This app is progress-dominated, so these are
 additions, made to stay inside the system's stated rules:
 
-- **Progress bar** — track `surface-elevated`, fill `primary-bright` (`#4f55f1`).
-  Cobalt is used here despite the "keep it scarce" rule because a running
-  download is precisely the "single deliberate stamp" moment the rule protects.
-  When a progress bar is visible, no other cobalt element should be.
+- **Progress bar** — track `surface-elevated`, fill `primary-bright` (`#c026d3`,
+  4.46:1 on black). The accent is spent here despite the "keep it scarce" rule
+  because a running download is precisely the "single deliberate stamp" moment
+  the rule protects. When a progress bar is visible, no other element should
+  carry the accent.
 - **Status text** — success uses `accent-green-text` (`#006400`) and errors use
   `accent-deep-red` (`#8b0000`), *not* `accent-teal` / `accent-danger`. See the
   contrast findings below; the source system already provides these as the
@@ -59,7 +61,7 @@ restricted to the roles noted:
 | `ash` on white | 6.5:1 | AA |
 | white on black | 21.0:1 | AAA |
 | `on-dark-mute` on black | 10.6:1 | AAA |
-| white on `primary` | 6.1:1 | AA — featured card text is safe |
+| white on `primary` `#a21caf` | 6.3:1 | AA — featured card text is safe |
 | `link` on white | 4.9:1 | AA |
 | `accent-pink` on white | 4.5:1 | AA (borderline) |
 | `stone` on white | 3.0:1 | **Fails body text** — metadata at ≥18.66px bold, or non-text only |
@@ -67,7 +69,7 @@ restricted to the roles noted:
 | `accent-yellow` on white | 3.1:1 | **Fails as text** — fills and icons only |
 | `accent-warning` on white | 2.8:1 | **Fails entirely as text** |
 | `faint` on white | 1.7:1 | Disabled foreground only, never informational |
-| `primary` on black | 3.5:1 | **Fails as text** — passes 1.4.11 for UI components |
+| `primary` on black | 3.3:1 | **Fails as text** — passes 1.4.11 for UI components |
 
 Two consequences worth stating plainly:
 
@@ -92,11 +94,15 @@ Two consequences worth stating plainly:
 - **No hero at 136px.** `display-xxl` is specified as "one per page" for a
   marketing flagship. A tool that users open dozens of times a day should not
   shout; the URL hero uses `display-xl` (80px) as its ceiling.
-- **No Revolut brand assets.** Wordmark, logo, product photography, and plan
-  names are not used. What is borrowed is the token system and layout language.
-  The cobalt `#494fdf` is retained as the accent per your direction; if this
-  project is ever published under its own identity, that hex is the one thing
-  worth changing to avoid reading as Revolut-branded.
+- **A different brand colour.** The source document's cobalt violet `#494fdf`
+  is Revolut's own brand accent and is **not** used. This project uses fuchsia
+  `#a21caf` (bright `#c026d3`, deep `#86198f`) in the same structural role.
+  It was chosen because it collides with none of the status colours — green
+  success, red error, amber warning — and clears AA with white text at 6.3:1,
+  while its bright variant reaches 4.46:1 on black as a progress fill, better
+  than the cobalt it replaces. No Revolut wordmark, logo, photography or plan
+  names are used either; what is borrowed is the token structure and layout
+  language, not the brand.
 
 ## Cross-interface reach
 
