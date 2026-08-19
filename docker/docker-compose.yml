@@ -1,5 +1,5 @@
 # Descended from the compose file added to YouTube-MP4-Downloader-Pro in
-# c2804ef and removed the same day. That version mounted the source directory
+# 239108c and removed the same day. That version mounted the source directory
 # and kept a TTY open for the interactive CLI; this one serves the web
 # interface instead.
 

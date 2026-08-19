@@ -1,6 +1,6 @@
 # Container image for the web interface.
 #
-# Descended from the Dockerfile added to YouTube-MP4-Downloader-Pro in c2804ef
+# Descended from the Dockerfile added to YouTube-MP4-Downloader-Pro in 239108c
 # (February 2025) and removed the same day. The base idea is unchanged — install
 # ffmpeg from apt rather than shipping Windows binaries — but the entry point,
 # dependency install and exposed service are updated for the unified layout.
