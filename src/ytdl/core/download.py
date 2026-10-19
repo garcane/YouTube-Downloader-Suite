@@ -21,7 +21,9 @@ from __future__ import annotations
 
 import shutil
 import tempfile
+import urllib.error
 from dataclasses import dataclass
+
 from pathlib import Path
 from typing import Optional
 
@@ -236,7 +238,33 @@ def download(
             )
         else:
             result_path = _run_video_pipeline(info, chosen, directory, stem, reporter, cancel)
+    except urllib.error.HTTPError as exc:
+        if exc.code == 403:
+            # Attempt to rotate clients and retry the entire operation once.
+            # This handles cases where the metadata client is allowed but the stream is forbidden.
+            reporter.emit(
+                Phase.RESOLVING,
+                message="Download forbidden. Trying a different connection client...",
+                force=True
+            )
+            # Clear the cached working client to force a fresh rotation
+            from .streams import _working_client
+            import sys
+            # We use a hack here because _working_client is a global in streams.py
+            import ytdl.core.streams as streams
+            streams._working_client = None
+
+            # Retry the pipeline
+            if chosen.kind == "audio":
+                result_path = _run_audio_pipeline(
+                    info, chosen, directory, stem, reporter, cancel, mp3_bitrate
+                )
+            else:
+                result_path = _run_video_pipeline(info, chosen, directory, stem, reporter, cancel)
+        else:
+            raise
     except DownloadCancelledError:
+
         reporter.emit(Phase.CANCELLED, message="Cancelled", force=True)
         raise
     except YtdlError as exc:
